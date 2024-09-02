@@ -7,6 +7,9 @@ startup
     vars.Helper.LoadSceneManager = true;
     vars.Helper.AlertLoadless();
 
+	settings.Add("ILMode", false, "Start timer for ILs");
+	settings.SetToolTip("ILMode", "Starts the timer when entering a main world from the Dream Hub, or a secret from a main world");
+
 	settings.Add("NExit", true, "Split on entering main worlds");
 	settings.SetToolTip("NExit", "Can be combined with splits for entering the Dream Nexus");
 
@@ -51,9 +54,9 @@ isLoading
 
 start
 {
-	if (current.activeScene == "MainMenu_0" && current.loadingScene == "Scene0_b_IntroStartGame") {
-		return true;
-	};
+	if (current.activeScene == "MainMenu_0" && current.loadingScene == "Scene0_b_IntroStartGame") {return true;}
+	else if (current.activeScene.Contains("LS") && current.loadingScene.Contains("Dr")) {return settings["ILMode"];}
+	else if (current.activeScene.Contains("Dr") && current.loadingScene.Contains("Sec")) {return settings["ILMode"];};
 }
 
 split
