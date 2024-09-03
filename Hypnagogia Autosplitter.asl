@@ -55,8 +55,8 @@ isLoading
 start
 {
 	if (current.activeScene == "MainMenu_0" && current.loadingScene == "Scene0_b_IntroStartGame") {return true;}
-	else if (current.activeScene.Contains("LS") && current.loadingScene.Contains("Dr")) {return settings["ILMode"];}
-	else if (current.activeScene.Contains("Dr") && current.loadingScene.Contains("Sec")) {return settings["ILMode"];};
+	else if (old.activeScene.Contains("LS") && current.activeScene.Contains("Dr")) {return settings["ILMode"];}
+	else if (old.activeScene.Contains("Dr") && current.activeScene.Contains("Sec")) {return settings["ILMode"];};
 }
 
 split
