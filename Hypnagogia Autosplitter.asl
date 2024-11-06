@@ -11,14 +11,17 @@ startup
 	settings.SetToolTip("ILMode", "Starts the timer when entering a main world from the Dream Hub, or a secret from a main world");
 
 	settings.Add("NExit", true, "Split on entering main worlds");
-	settings.SetToolTip("NExit", "Can be combined with splits for entering the Dream Nexus");
+	settings.SetToolTip("NExit", "Can be combined with splits for finishing main worlds");
 
-	settings.Add("NEnter", false, "Split on exiting main worlds");
+	settings.Add("NEnter", false, "Split on finishing main worlds");
 	settings.SetToolTip("NEnter", "Excludes the first Nexus after tutorial. Can be combined with splits for entering main worlds");
 
 	settings.Add("MansionEntry", false, "Split on entering Haunted World's mansion interior");
 
 	settings.Add("HeavenEntry", false, "Split on entering Heaven in Tower World");
+	
+	settings.Add("HeavenEndSplit", true, "Split on loading ending cutscene");
+	settings.SetToolTip("HeavenEndSplit", "Subtracts exactly 6 seconds from end time to abide by timing rules, since it splits late.");
 	
 	settings.Add("Extra", false, "Non-Any% Splits");
 	
@@ -32,11 +35,17 @@ startup
 	
 	settings.Add("DesertEntry", true, "Split on entering Desert World");
 	
-	settings.Add("MazeEntry", true, "Split on entering School World");
+	settings.Add("MazeEntry", false, "Split on entering School World");
+	settings.Add("MazeExit", true, "Split on finishing School World");
 	
 	settings.Add("CandyEntry", true, "Split on entering Candy World");
 	
 	settings.Add("ShowcaseEntry", false, "Split on entering Model Showcase from the Dream Hub");
+}
+
+init
+{
+	vars.currentTime = new TimeSpan(0, 0, 0);
 }
 
 update
@@ -65,6 +74,7 @@ split
 
 	else if (old.activeScene.Contains("Hub_0") && current.activeScene.Contains("Dr")) {return settings["NExit"];}	//on entering main worlds from Dream Nexus (not Hub!)
 	else if (current.activeScene.Contains("Hub_0") && old.activeScene.Contains("Dr")) {return settings["NEnter"];}	//on entering Dream Nexus from main worlds
+	else if (old.activeScene == "Dream_9_Heaven" && current.activeScene == "Scene3_Final_Cutscene_0") {return settings["HeavenEndSplit"];}	//on ending the run (any% & All Dreams)
 
 	else if (old.activeScene == "Dream_5_Space_Blackhole" && current.activeScene == "Scene2_Intro_Gogi") {return true;}			//on entering Crux cutscene
 	else if (old.activeScene == "Scene2_Outro_Gogi" && current.activeScene == "Hub_06_Mansion") {return settings["NEnter"];}	//on leaving Crux
@@ -77,8 +87,23 @@ split
 	else if (old.activeScene == "Dream_3_Bamboo" && current.activeScene == "Secret_4_Forest") {return settings["ForestEntry"];}
 	else if (old.activeScene == "Dream_4_Ice" && current.activeScene == "Secret_1_Desert") {return settings["DesertEntry"];}
 	else if (old.activeScene == "Dream_6_Mansion_Exterior" && current.activeScene == "Secret_2_Maze") {return settings["MazeEntry"];}
+	else if (old.activeScene == "Secret_2_Maze" && current.activeScene == "Dream_6_Mansion_Exterior_AfterMaze") {return settings["MazeEexit"];}
 	else if (old.activeScene == "Dream_6_Mansion_Interior" && current.activeScene == "Secret_3_Candy") {return settings["CandyEntry"];}
 	else if (old.activeScene.Contains("Dream_3_Bamboo_AfterForest_") && current.activeScene == "LS_Hub_LevelSelect") {return settings["ForestEntry"];}
 	else if (old.activeScene == "LS_Hub_LevelSelect" && current.activeScene == "Dream_3_Bamboo") {return settings["ForestEntry"];}
 	else if (old.activeScene == "LS_Hub_LevelSelect" && current.activeScene == "Dream_Secret_ShowcaseRoom") {return settings["ShowcaseEntry"];};
+}
+
+reset
+{
+	if (current.activeScene.Contains("Hub_0") && current.loadingScene == "MainMenu_0") {return true;}
+	else if (current.activeScene == "Dream_9_Heaven" && current.loadingScene == "MainMenu_0") {return true;};
+}
+
+gameTime
+{
+	if (current.activeScene == "Scene3_Final_Cutscene_0" && old.activeScene == "Dream_9_Heaven") {
+		vars.currentTime = timer.CurrentTime.GameTime;
+		return vars.currentTime.Subtract(new TimeSpan (0, 0, 6));
+	};
 }
