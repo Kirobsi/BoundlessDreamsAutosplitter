@@ -99,12 +99,13 @@ split
 reset
 {
 	if (current.activeScene.Contains("Hub_0") && current.loadingScene == "MainMenu_0") {return true;}
+	else if (current.activeScene == "Dream_5_Space_Blackhole_Gogi" && current.loadingScene == "MainMenu_0") {return true;}
 	else if (current.activeScene == "Dream_9_Heaven" && current.loadingScene == "MainMenu_0") {return true;};
 }
 
 gameTime
 {
-	if (current.activeScene == "Scene3_Final_Cutscene_0" && old.activeScene == "Dream_9_Heaven") {
+	if (current.activeScene == "Dream_9_Heaven" && current.loadingScene == "Scene3_Final_Cutscene_0") {
 		vars.currentTime = timer.CurrentTime.GameTime;
 		return vars.currentTime.Subtract(new TimeSpan (0, 0, 6));
 	};
