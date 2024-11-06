@@ -74,7 +74,9 @@ split
 
 	else if (old.activeScene.Contains("Hub_0") && current.activeScene.Contains("Dr")) {return settings["NExit"];}	//on entering main worlds from Dream Nexus (not Hub!)
 	else if (current.activeScene.Contains("Hub_0") && old.activeScene.Contains("Dr")) {return settings["NEnter"];}	//on entering Dream Nexus from main worlds
-	else if (old.activeScene == "Dream_9_Heaven" && current.activeScene == "Scene3_Final_Cutscene_0") {return settings["HeavenEndSplit"];}	//on ending the run (any% & All Dreams)
+	
+	else if (current.activeScene == "Dream_9_Heaven" && current.loadingScene == "Scene3_Final_Cutscene_0") {return settings["HeavenEndSplit"];}	//on ending the run (any% & All Dreams)
+	//this will spam split if the player has their splits set up wrong! But if I fix that, then realtime won't be accurate, so... that's a user problem, not a dev problem
 
 	else if (old.activeScene == "Dream_5_Space_Blackhole" && current.activeScene == "Scene2_Intro_Gogi") {return true;}			//on entering Crux cutscene
 	else if (old.activeScene == "Scene2_Outro_Gogi" && current.activeScene == "Hub_06_Mansion") {return settings["NEnter"];}	//on leaving Crux
