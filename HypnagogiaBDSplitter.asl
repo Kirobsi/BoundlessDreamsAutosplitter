@@ -11,17 +11,17 @@ startup
 	settings.SetToolTip("ILMode", "Starts the timer when entering a main world from the Dream Hub, or a secret from a main world");
 
 	settings.Add("NExit", true, "Split on entering main worlds");
-	settings.SetToolTip("NExit", "Can be combined with splits for finishing main worlds");
+	settings.SetToolTip("NExit", "Can be combined with 'split on finishing main worlds'");
 
 	settings.Add("NEnter", false, "Split on finishing main worlds");
-	settings.SetToolTip("NEnter", "Excludes the first Nexus after tutorial. Can be combined with splits for entering main worlds");
+	settings.SetToolTip("NEnter", "Splits when entering the Nexus after a main world. Can be combined with 'split on entering main worlds'");
 
 	settings.Add("MansionEntry", false, "Split on entering Haunted World's mansion interior");
 
 	settings.Add("HeavenEntry", false, "Split on entering Heaven in Tower World");
 	
 	settings.Add("HeavenEndSplit", true, "Split on loading ending cutscene");
-	settings.SetToolTip("HeavenEndSplit", "Subtracts exactly 6 seconds from end time to abide by timing rules, since it splits late.");
+	settings.SetToolTip("HeavenEndSplit", "Subtracts exactly 6 seconds from end time to abide by timing rules, since it splits late");
 	
 	settings.Add("Extra", false, "Non-Any% Splits");
 	
