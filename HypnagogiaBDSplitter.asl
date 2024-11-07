@@ -70,9 +70,9 @@ start
 
 split
 {
-	if (!settings["NExit"]) {if (old.activeScene == "Hub_00_b_Intro" && current.activeScene == "Dream_1_Cave") {return true;}}	//on entering Cave no matter what
+	if (!settings["NExit"] && old.activeScene == "Hub_00_b_Intro" && current.activeScene == "Dream_1_Cave") {return true;}		//on entering Cave no matter what
 
-	if (old.activeScene.Contains("Hub_0") && current.activeScene.Contains("Dr") && settings["NExit"]) {return true;}			//on entering main worlds from Dream Nexus (not Hub!)
+	else if (old.activeScene.Contains("Hub_0") && current.activeScene.Contains("Dr") && settings["NExit"]) {return true;}			//on entering main worlds from Dream Nexus (not Hub!)
 	else if (current.activeScene.Contains("Hub_0") && old.activeScene.Contains("Dr") && settings["NEnter"]) {return true;}		//on entering Dream Nexus from main worlds
 	else if (current.loadingScene.Contains("LS") && current.activeScene.Contains("Dr") && settings["ILMode"]) {return true;}	//on finishing ILs
 	
@@ -111,8 +111,18 @@ gameTime
 		return vars.currentTime.Subtract(new TimeSpan (0, 0, 6));	//subtract 6 seconds from time on loading ending cutscene
 	}
 	
+	else if (current.loadingScene.Contains("LS") && current.activeScene == "Dream_7_Mall" && settings["ILMode"]) {
+		vars.currentTime = timer.CurrentTime.GameTime;
+		return vars.currentTime.Subtract(new TimeSpan (0, 0, 8));	//sub 8 from Mall World IL
+	}
+	
+	else if (current.loadingScene.Contains("LS") && current.activeScene == "Dream_9_Heaven" && settings["ILMode"]) {
+		vars.currentTime = timer.CurrentTime.GameTime;
+		return vars.currentTime.Subtract(new TimeSpan (0, 0, 6));	//sub 6 from Tower IL
+	}
+	
 	else if (current.loadingScene.Contains("LS") && current.activeScene.Contains("Dr") && settings["ILMode"]) {
 		vars.currentTime = timer.CurrentTime.GameTime;
-		return vars.currentTime.Subtract(new TimeSpan (0, 0, 5));
+		return vars.currentTime.Subtract(new TimeSpan (0, 0, 5));	//sub 5 from generic IL
 	}
 }
