@@ -72,8 +72,14 @@ split
 {
 	if (!settings["NExit"] && old.activeScene == "Hub_00_b_Intro" && current.activeScene == "Dream_1_Cave") {return true;}		//on entering Cave no matter what
 
-	else if (old.activeScene.Contains("Hub_0") && current.activeScene.Contains("Dr") && settings["NExit"]) {return true;}			//on entering main worlds from Dream Nexus (not Hub!)
-	else if (current.activeScene.Contains("Hub_0") && old.activeScene.Contains("Dr") && settings["NEnter"]) {return true;}		//on entering Dream Nexus from main worlds
+	else if (old.activeScene.Contains("Hub_0") && current.activeScene.Contains("Dr") && settings["NExit"]) {return true;}		//on entering main worlds from Dream Nexus (not Hub!)
+
+	//on entering following Dream Hub from a level
+	else if (settings["NEnter"]) {
+		if (old.activeScene.Contains("Dr") && current.activeScene.Contains("Hub_0")) {
+			if (Convert.ToInt32(old.activeScene[6]) < Convert.ToInt32(current.activeScene[5])) {return true;}
+		}
+	}
 	else if (current.loadingScene.Contains("LS") && current.activeScene.Contains("Dr") && settings["ILMode"]) {return true;}	//on finishing ILs
 	
 	else if (current.activeScene == "Dream_9_Heaven" && current.loadingScene == "Scene3_Final_Cutscene_0" && settings["HeavenEndSplit"]) {return true;}	//on ending the run (any% & All Dreams)
