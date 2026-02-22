@@ -40,6 +40,8 @@ startup
 	
 	settings.Add("CandyEntry", true, "Split on entering Candy World");
 	
+	settings.Add("MushReentry", true, "Split on entering Mushroom World from the Dream Hub (for All Achievements)");
+	
 	settings.Add("ShowcaseEntry", false, "Split on entering Model Showcase from the Dream Hub");
 }
 
@@ -70,14 +72,15 @@ start
 
 split
 {
-	if (!settings["NExit"] && old.activeScene == "Hub_00_b_Intro" && current.activeScene == "Dream_1_Cave") {return true;}		//on entering Cave no matter what
+	if ((settings["NExit"] || settings["NEnter"]) && old.activeScene == "Hub_00_b_Intro" && current.activeScene == "Dream_1_Cave") {return true;}	//on entering Cave
 
-	else if (old.activeScene.Contains("Hub_0") && current.activeScene.Contains("Dr") && settings["NExit"]) {return true;}		//on entering main worlds from Dream Nexus (not Hub!)
+	else if (old.activeScene.Contains("Hub_0") && current.activeScene.Contains("Dr") && settings["NExit"]) {return true;}	//on entering main worlds from Dream Nexus (not Hub!)
 
-	//on entering following Dream Hub from a level
+	//on entering following Dream Nexus from a level
 	else if (settings["NEnter"] && old.activeScene.Contains("Dr") && current.activeScene.Contains("Hub_0")) {
 		if (Convert.ToInt32(old.activeScene[6]) < Convert.ToInt32(current.activeScene[5])) {return true;}
 	}
+	
 	if (current.loadingScene.Contains("LS") && current.activeScene.Contains("Dr") && settings["ILMode"]) {return true;}	//on finishing ILs
 	
 	else if (current.activeScene == "Dream_9_Heaven" && current.loadingScene == "Scene3_Final_Cutscene_0" && settings["HeavenEndSplit"]) {return true;}	//on ending the run (any% & All Dreams)
@@ -86,26 +89,26 @@ split
 	else if (old.activeScene == "Dream_5_Space_Blackhole" && current.activeScene == "Scene2_Intro_Gogi") {return true;}					//on entering Crux cutscene
 	else if (old.activeScene == "Scene2_Outro_Gogi" && current.activeScene == "Hub_06_Mansion" && settings["NEnter"]) {return true;}	//on leaving Crux
 
-	else if (old.activeScene == "Dream_8_Tower" && current.activeScene == "Dream_9_Heaven" && settings["HeavenEntry"]) {return true;}
-	else if (old.activeScene.Contains("Dream_6_Mansion_E") && current.activeScene == "Dream_6_Mansion_Interior" && settings["MansionEntry"]) {return true;}
+	else if (old.activeScene == "Dream_8_Tower" && current.activeScene == "Dream_9_Heaven" && settings["HeavenEntry"]) {return true;}						//on entering Heaven
+	else if (old.activeScene.Contains("Dream_6_Mansion_E") && current.activeScene == "Dream_6_Mansion_Interior" && settings["MansionEntry"]) {return true;}	//on entering Mansion Interior
 
-	else if (old.activeScene == "Dream_1_Cave" && current.activeScene == "Secret_0_Lava" && settings["HellEntry"]) {return true;}
-	else if (old.activeScene == "Dream_2_Mist" && current.activeScene == "Secret_4_Water" && settings["WaterEntry"]) {return true;}
-	else if (old.activeScene == "Dream_3_Bamboo" && current.activeScene == "Secret_4_Forest" && settings["ForestEntry"]) {return true;}
-	else if (old.activeScene == "Dream_4_Ice" && current.activeScene == "Secret_1_Desert" && settings["DesertEntry"]) {return true;}
-	else if (old.activeScene == "Dream_6_Mansion_Exterior" && current.activeScene == "Secret_2_Maze" && settings["MazeEntry"]) {return true;}
-	else if (old.activeScene == "Secret_2_Maze" && current.activeScene == "Dream_6_Mansion_Exterior_AfterMaze" && settings["MazeEexit"]) {return true;}
-	else if (old.activeScene == "Dream_6_Mansion_Interior" && current.activeScene == "Secret_3_Candy" && settings["CandyEntry"]) {return true;}
-	else if (old.activeScene.Contains("Dream_3_Bamboo_AfterForest_") && current.activeScene == "LS_Hub_LevelSelect" && settings["ForestEntry"]) {return true;}
-	else if (old.activeScene == "LS_Hub_LevelSelect" && current.activeScene == "Dream_3_Bamboo" && settings["ForestEntry"]) {return true;}
-	else if (old.activeScene == "LS_Hub_LevelSelect" && current.activeScene == "Dream_Secret_ShowcaseRoom" && settings["ShowcaseEntry"]) {return true;}
+	else if (old.activeScene == "Dream_1_Cave" && current.activeScene == "Secret_0_Lava" && settings["HellEntry"]) {return true;}								//on entering Hell World
+	else if (old.activeScene == "Dream_2_Mist" && current.activeScene == "Secret_4_Water" && settings["WaterEntry"]) {return true;}								//on entering Underwater World
+	else if (old.activeScene == "Dream_3_Bamboo" && current.activeScene == "Secret_4_Forest" && settings["ForestEntry"]) {return true;}							//on entering Forest World
+	else if (old.activeScene == "Dream_4_Ice" && current.activeScene == "Secret_1_Desert" && settings["DesertEntry"]) {return true;}							//on entering Desert World
+	else if (old.activeScene == "Dream_6_Mansion_Exterior" && current.activeScene == "Secret_2_Maze" && settings["MazeEntry"]) {return true;}					//on entering School World
+	else if (old.activeScene == "Secret_2_Maze" && current.activeScene == "Dream_6_Mansion_Exterior_AfterMaze" && settings["MazeEexit"]) {return true;}			//on finishing School World
+	else if (old.activeScene == "Dream_6_Mansion_Interior" && current.activeScene == "Secret_3_Candy" && settings["CandyEntry"]) {return true;}					//on entering Candy World
+	else if (old.activeScene.Contains("Dream_3_Bamboo_AfterForest_") && current.activeScene == "LS_Hub_LevelSelect" && settings["ForestEntry"]) {return true;}	//end of Forest 2 for All Achievements
+	else if (old.activeScene == "LS_Hub_LevelSelect" && current.activeScene == "Dream_3_Bamboo" && settings["MushReentry"]) {return true;}						//to end tower/heaven split for All Achievements
+	else if (old.activeScene == "LS_Hub_LevelSelect" && current.activeScene == "Dream_Secret_ShowcaseRoom" && settings["ShowcaseEntry"]) {return true;}			//end of AA (enter model showcase)
 }
 
 reset
 {
-	if (current.activeScene.Contains("Hub_0") && current.loadingScene == "MainMenu_0") {return true;}
-	else if (current.activeScene == "Dream_5_Space_Blackhole_Gogi" && current.loadingScene == "MainMenu_0") {return true;}
-	else if (current.activeScene == "Dream_9_Heaven" && current.loadingScene == "MainMenu_0") {return true;}
+	if (current.activeScene.Contains("Hub_0") && current.loadingScene == "MainMenu_0") {return true;}						//reset when returning to menu from Dream Nexus,
+	else if (current.activeScene == "Dream_5_Space_Blackhole_Gogi" && current.loadingScene == "MainMenu_0") {return true;}	//Crux,
+	else if (current.activeScene == "Dream_9_Heaven" && current.loadingScene == "MainMenu_0") {return true;}				//or Heaven
 }
 
 gameTime
