@@ -15,6 +15,8 @@ startup
 
 	settings.Add("NEnter", false, "Split on finishing main worlds");
 	settings.SetToolTip("NEnter", "Splits when entering the Nexus after a main world. Can be combined with 'split on entering main worlds'");
+	
+	settings.Add("CruxEntry", true, "Split on finishing Space World and entering the Ethereal Crux");
 
 	settings.Add("MansionEntry", false, "Split on entering Haunted World's mansion interior");
 
@@ -40,13 +42,15 @@ startup
 	
 	settings.Add("CandyEntry", true, "Split on entering Candy World");
 	
-	settings.Add("MushReentry", true, "Split on entering Mushroom World from the Dream Hub (for All Achievements)");
+	settings.Add("MushReentry", false, "Split on entering Mushroom World from Dream Hub");
+	settings.SetToolTip("MushReentry", "For use in All Achievements, since you need to do Mushroom World (and Forest World!) twice");
 	
 	settings.Add("ShowcaseEntry", false, "Split on entering Model Showcase from the Dream Hub");
-}
-
-init
-{
+	settings.SetToolTip("ShowcaseEntry", "For use in All Achievements. This should be your last split!");
+	
+	vars.hubNumber = 49;
+	vars.dreamNumber = 48;
+	vars.endSplit = true;
 	vars.currentTime = new TimeSpan(0, 0, 0);
 }
 
@@ -72,21 +76,30 @@ start
 
 split
 {
-	if ((settings["NExit"] || settings["NEnter"]) && old.activeScene == "Hub_00_b_Intro" && current.activeScene == "Dream_1_Cave") {return true;}	//on entering Cave
-
-	else if (old.activeScene.Contains("Hub_0") && current.activeScene.Contains("Dr") && settings["NExit"]) {return true;}	//on entering main worlds from Dream Nexus (not Hub!)
+	//on entering main worlds from Dream Nexus (not Hub!)
+	if (old.activeScene.Contains("Hub_0") && current.activeScene.Contains("Dr") && settings["NExit"]) {
+		if (vars.dreamNumber < Convert.ToInt32(current.activeScene[6])) {
+			vars.dreamNumber += 1;
+			return true;
+		}
+	}
 
 	//on entering following Dream Nexus from a level
-	else if (settings["NEnter"] && old.activeScene.Contains("Dr") && current.activeScene.Contains("Hub_0")) {
-		if (Convert.ToInt32(old.activeScene[6]) < Convert.ToInt32(current.activeScene[5])) {return true;}
+	else if (old.activeScene.Contains("Dr") && current.activeScene.Contains("Hub_0") && settings["NEnter"]) {
+		if (vars.hubNumber < Convert.ToInt32(current.activeScene[5])) {
+			vars.hubNumber += 1;
+			return true;
+		}
 	}
 	
 	if (current.loadingScene.Contains("LS") && current.activeScene.Contains("Dr") && settings["ILMode"]) {return true;}	//on finishing ILs
 	
-	else if (current.activeScene == "Dream_9_Heaven" && current.loadingScene == "Scene3_Final_Cutscene_0" && settings["HeavenEndSplit"]) {return true;}	//on ending the run (any% & All Dreams)
-	//this will spam split if the player has their splits set up wrong! Might at some point fix this
+	else if (current.activeScene == "Dream_9_Heaven" && current.loadingScene == "Scene3_Final_Cutscene_0" && settings["HeavenEndSplit"] && vars.endSplit) {
+		vars.endSplit = false;	//disable ability to split here again
+		return true;	//split on ending the run (any% & All Dreams)
+	}
 
-	else if (old.activeScene == "Dream_5_Space_Blackhole" && current.activeScene == "Scene2_Intro_Gogi") {return true;}					//on entering Crux cutscene
+	else if (old.activeScene == "Dream_5_Space_Blackhole" && current.activeScene == "Scene2_Intro_Gogi" && settings["CruxEntry"]) {return true;}			//on entering Crux cutscene
 	else if (old.activeScene == "Scene2_Outro_Gogi" && current.activeScene == "Hub_06_Mansion" && settings["NEnter"]) {return true;}	//on leaving Crux
 
 	else if (old.activeScene == "Dream_8_Tower" && current.activeScene == "Dream_9_Heaven" && settings["HeavenEntry"]) {return true;}						//on entering Heaven
@@ -100,8 +113,13 @@ split
 	else if (old.activeScene == "Secret_2_Maze" && current.activeScene == "Dream_6_Mansion_Exterior_AfterMaze" && settings["MazeEexit"]) {return true;}			//on finishing School World
 	else if (old.activeScene == "Dream_6_Mansion_Interior" && current.activeScene == "Secret_3_Candy" && settings["CandyEntry"]) {return true;}					//on entering Candy World
 	else if (old.activeScene.Contains("Dream_3_Bamboo_AfterForest_") && current.activeScene == "LS_Hub_LevelSelect" && settings["ForestEntry"]) {return true;}	//end of Forest 2 for All Achievements
-	else if (old.activeScene == "LS_Hub_LevelSelect" && current.activeScene == "Dream_3_Bamboo" && settings["MushReentry"]) {return true;}						//to end tower/heaven split for All Achievements
+	else if (old.activeScene == "LS_Hub_LevelSelect" && current.activeScene == "Dream_3_Bamboo" && settings["MushReentry"]) {return true;}						//on entering Mushroom 2 for All Achievements
 	else if (old.activeScene == "LS_Hub_LevelSelect" && current.activeScene == "Dream_Secret_ShowcaseRoom" && settings["ShowcaseEntry"]) {return true;}			//end of AA (enter model showcase)
+}
+
+onSplit
+{
+	
 }
 
 reset
@@ -111,9 +129,16 @@ reset
 	else if (current.activeScene == "Dream_9_Heaven" && current.loadingScene == "MainMenu_0") {return true;}				//or Heaven
 }
 
+onReset
+{
+	vars.hubNumber = 49;
+	vars.dreamNumber = 48;
+	vars.endSplit = true;
+}
+
 gameTime
 {
-	if (current.activeScene == "Dream_9_Heaven" && current.loadingScene == "Scene3_Final_Cutscene_0") {
+	if (current.activeScene == "Dream_9_Heaven" && current.loadingScene == "Scene3_Final_Cutscene_0" && vars.endSplit) {
 		vars.currentTime = timer.CurrentTime.GameTime;
 		return vars.currentTime.Subtract(new TimeSpan (0, 0, 6));	//subtract 6 seconds from time on loading ending cutscene
 	}
