@@ -54,11 +54,13 @@ startup
 	vars.currentTime = new TimeSpan(0, 0, 0);
 }
 
+
 update
 {
     current.activeScene = vars.Helper.Scenes.Active.Name ?? old.activeScene;
     current.loadingScene = vars.Helper.Scenes.Loaded[0].Name ?? old.loadingScene;
 }
+
 
 isLoading
 {
@@ -67,12 +69,14 @@ isLoading
 	} else {return false;};
 }
 
+
 start
 {
 	if (current.activeScene == "MainMenu_0" && current.loadingScene == "Scene0_b_IntroStartGame") {return true;}	//for full-game runs
 	else if (old.activeScene.Contains("LS") && current.activeScene.Contains("Dr")) {return settings["ILMode"];}		//for main world ILs
 	else if (old.activeScene.Contains("Dr") && current.activeScene.Contains("Sec")) {return settings["ILMode"];}	//for secret world ILs
 }
+
 
 split
 {
@@ -96,11 +100,16 @@ split
 	
 	else if (current.activeScene == "Dream_9_Heaven" && current.loadingScene == "Scene3_Final_Cutscene_0" && settings["HeavenEndSplit"] && vars.endSplit) {
 		vars.endSplit = false;	//disable ability to split here again
-		return true;	//split on ending the run (any% & All Dreams)
+		return true;			//split on ending the run (any% & All Dreams)
 	}
 
-	else if (old.activeScene == "Dream_5_Space_Blackhole" && current.activeScene == "Scene2_Intro_Gogi" && settings["CruxEntry"]) {return true;}			//on entering Crux cutscene
-	else if (old.activeScene == "Scene2_Outro_Gogi" && current.activeScene == "Hub_06_Mansion" && settings["NEnter"]) {return true;}	//on leaving Crux
+	else if (old.activeScene == "Dream_5_Space_Blackhole" && current.activeScene == "Scene2_Intro_Gogi" && settings["CruxEntry"]) {return true;}	//on entering Crux cutscene
+	else if (old.activeScene == "Scene2_Outro_Gogi" && current.activeScene == "Hub_06_Mansion" && settings["NEnter"]) {								//on leaving Crux
+		if (vars.hubNumber < Convert.ToInt32(current.activeScene[5])) {
+			vars.hubNumber += 1;
+			return true;
+		}
+	}
 
 	else if (old.activeScene == "Dream_8_Tower" && current.activeScene == "Dream_9_Heaven" && settings["HeavenEntry"]) {return true;}						//on entering Heaven
 	else if (old.activeScene.Contains("Dream_6_Mansion_E") && current.activeScene == "Dream_6_Mansion_Interior" && settings["MansionEntry"]) {return true;}	//on entering Mansion Interior
@@ -117,10 +126,12 @@ split
 	else if (old.activeScene == "LS_Hub_LevelSelect" && current.activeScene == "Dream_Secret_ShowcaseRoom" && settings["ShowcaseEntry"]) {return true;}			//end of AA (enter model showcase)
 }
 
+
 onSplit
 {
 	
 }
+
 
 reset
 {
@@ -129,12 +140,14 @@ reset
 	else if (current.activeScene == "Dream_9_Heaven" && current.loadingScene == "MainMenu_0") {return true;}				//or Heaven
 }
 
+
 onReset
 {
 	vars.hubNumber = 49;
 	vars.dreamNumber = 48;
 	vars.endSplit = true;
 }
+
 
 gameTime
 {
