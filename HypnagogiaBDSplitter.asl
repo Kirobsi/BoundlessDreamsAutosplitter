@@ -108,7 +108,7 @@ isLoading
 
 start
 {
-	if (vars.mod) {
+	if (vars.mod && current.activeScene != "LogoSplash_DreamStation") {
 		if (current.start_new_save && !old.start_new_save) {return true;}												//for full-game runs with splitter mod
 	}
 	
